@@ -2,15 +2,6 @@
 
 THEMES
 
-1. sea era
+1. hack and slash, 2D, RPG, roguelike, beat 'em up
 
 
-
-FEATURES
-
-1. languages
-
-
-RESOURCES
-
-1. Tiled Map Editor
