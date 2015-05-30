@@ -5,6 +5,7 @@ Created on Fri May 22 13:03:49 2015
 @author: larry
 """
 import sprite_handle
+import pygame
 
 white = (255, 255, 255)
 
@@ -32,22 +33,40 @@ class main_anime(object):
                                                (0, 96, 32, 32), 10,
                                                white, False, self.frames)
         self.sprite_idle = sprite_handle.sprite_strip_anim(
-                                               'sprites/ranger.png', 
-                                               (0, 0, 32, 32), 10,
-                                               white, True, self.frames)
+                                               'sprites/jael.png', 
+                                               (0, 48, 32, 48), 1,
+                                               None, True, self.frames)
         self.sprite_walk = sprite_handle.sprite_strip_anim(
-                                               'sprites/ranger.png', 
-                                               (0, 64, 32, 32), 10,
-                                               white, True, self.frames)
+                                               'sprites/jael.png', 
+                                               (0, 48, 32, 48), 4,
+                                               None, True, self.frames)
         self.sprite_image = self.sprite_idle #default to idle mode
     
     def update(self, keys_list):
         '''
         use keys_list found by events_fetch to update the keys_list
         '''
-        self.attack_key_down = keys_list[0]
-        # 8 directions + last item (True if one of the directions is pressed)
-        self.directions_down = keys_list[1]
+        self.attack_key_down = pygame.key.get_pressed()[pygame.K_z]
+        # 8 directions + last item (True if one of the directions is pressed)        
+        if pygame.key.get_pressed()[pygame.K_RIGHT]:
+            self.directions_down[0] = True
+        else:
+            self.directions_down[0] = False
+        
+        if pygame.key.get_pressed()[pygame.K_LEFT]:
+            self.directions_down[1] = True
+        else:
+            self.directions_down[1] = False
+        
+        if pygame.key.get_pressed()[pygame.K_UP]:
+            self.directions_down[2] = True
+        else:
+            self.directions_down[2] = False
+        
+        if pygame.key.get_pressed()[pygame.K_DOWN]:
+            self.directions_down[3] = True
+        else:
+            self.directions_down[3] = False
                                                             
         
         #right-up movement
