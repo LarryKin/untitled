@@ -52,7 +52,8 @@ class sprite_strip_anim(object):
     __add__() method for joining strips which comes in handy when a
     strip wraps to the next row.
     """
-    def __init__(self, filename, rect, count, colorkey=None, loop=False, frames=1):
+    def __init__(self, filename, rect, count, colorkey=None, loop=False,
+                 flip=False, frames=1):
         """construct a sprite_strip_anim
         
         filename, rect, count, and colorkey are the same arguments used
@@ -60,6 +61,9 @@ class sprite_strip_anim(object):
         
         loop is a boolean that, when True, causes the next() method to
         loop. If False, the terminal case raises StopIteration.
+        
+        flip is used for 2D platformer where walking left is simply flipping
+        walking right
         
         frames is the number of ticks to return the same image before
         the iterator advances to the next image.
@@ -69,6 +73,7 @@ class sprite_strip_anim(object):
         self.images = ss.load_strip(rect, count, colorkey)
         self.i = 0
         self.loop = loop
+        self.flip = flip
         self.frames = frames
         self.f = frames  #if this reaches 0, the image is updated to next
         self.end = False #status of the complete of an animation 
@@ -98,7 +103,11 @@ class sprite_strip_anim(object):
         if self.f == 0:
             self.i += 1
             self.f = self.frames
-        return image
+        if self.flip:
+            return pygame.transform.flip(image, True, False)
+        else:
+            return image
+        
     def __add__(self, ss):
         self.images.extend(ss.images)
         return self

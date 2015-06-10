@@ -3,6 +3,7 @@
 THEMES
 
 1. hack and slash, 2D, RPG, roguelike, beat 'em up
+2. platformed: risk of rain (fluidity), league of legened(combat skills, cc, etc), hotline miami(plot length?), gunpoint(stealth element). Problems I do not like: 2D platformer too ‘flat’. Add 3D element to it.
 
 
 TO DO:
