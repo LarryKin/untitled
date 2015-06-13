@@ -12,7 +12,9 @@ class floor(pygame.sprite.Sprite):
         super(floor, self).__init__()
         self.image = pygame.Surface((200,3))
         self.image.fill(white)
-        self.rect = (0,100,200,3)
+        self.rect = self.image.get_bounding_rect()
+        self.rect.centerx = 100
+        self.rect.centery = 100
           
         
         

@@ -8,6 +8,7 @@ import sprite_handle
 import pygame
 
 white = (255, 255, 255)
+gravity = (0,1)
 
 class main_character(pygame.sprite.Sprite):  
     def __init__(self, initial_coor, frames):
@@ -15,7 +16,6 @@ class main_character(pygame.sprite.Sprite):
         self.attack_key_down = False
         # 8 directions + last item (True if one of the directions is pressed)
         self.directions_down = [False] * 9
-        self.coor = initial_coor
         self.frames = frames
         
         self.speed = (0,0)
@@ -56,11 +56,15 @@ class main_character(pygame.sprite.Sprite):
                                                (0, 160, 32, 32), 10,
                                                None, True, True, self.frames)
         
+        self.on_ground = False
         self.state = self.idle_right
-        self.image = self.state.next();
-        self.rect = (self.coor[0], self.coor[1], 32, 32)
+        self.image = self.state.next()
+        
+        self.rect = self.image.get_bounding_rect()
+        self.rect.centerx = initial_coor[0]
+        self.rect.centery = initial_coor[1]
     
-    def update(self):
+    def update(self, blocks):
         '''
         use keys_list found by events_fetch to update the keys_list
         '''
@@ -90,11 +94,6 @@ class main_character(pygame.sprite.Sprite):
         else:
             self.directions_down[2] = False
         
-        if pygame.key.get_pressed()[pygame.K_DOWN]:
-            self.directions_down[3] = True
-            self.state = self.walk_down
-        else:
-            self.directions_down[3] = False
                                                                    
             #right-up movement
         if self.directions_down[0] and self.directions_down[2]:
@@ -108,35 +107,12 @@ class main_character(pygame.sprite.Sprite):
             self.state = self.walk_up
         else:
             self.directions_down[5] = False
-            #left-down movement
-        if self.directions_down[1] and self.directions_down[3]:
-            self.directions_down[6] = True  
-            self.state = self.walk_down
-        else:
-            self.directions_down[6] = False
-            #down-right movement
-        if self.directions_down[3] and self.directions_down[0]:
-            self.directions_down[7] = True  
-            self.state = self.walk_down
-        else:
-            self.directions_down[7] = False
         
         if self.directions_down[0:8] == [False] * 8:
             self.directions_down[8] = False
         else:
             self.directions_down[8] = True
-        
-        #update the speed
-        for i in range(8):
-            if self.directions_down[i] == True:
-                self.speed = self.speed_list[i]
-        
-                      
-        if self.directions_down[8]:
-            new_x = self.coor[0] + self.speed[0]
-            new_y = self.coor[1] + self.speed[1]
-            self.coor = (new_x, new_y)
-         
+                                       
         #this if condition reset all animation if the state from the last frame
         #is NOT in the default idle_right or idle_left states
         if (self.state != last_frame_state) and last_frame_state != \
@@ -149,10 +125,56 @@ class main_character(pygame.sprite.Sprite):
         #this allows the animation of default state to play
         if self.state == None:
             self.state = last_frame_state
-
+            
+                
+        #update the speed and new coordinate
+        for i in range(8):
+            if self.directions_down[i] == True:
+                self.speed = self.speed_list[i]
+            elif self.directions_down[8] == False:
+                self.speed = (0,0)
+        
+        #now include gravity
+        temp_speed = (self.speed[0] + gravity[0], 
+                      self.speed[1] + gravity[1])
+        self.speed = temp_speed
+        
+        #update y first
+        self.rect.centery += self.speed[1]
+        self.on_ground = False
+        self._collide_info(0, self.speed[1], blocks)
+        
+        #then update x
+        self.rect.centerx += self.speed[0]
+        self._collide_info(self.speed[0], 0, blocks)
+        
+        
         self.image = self.state.next()
-        self.rect = (self.coor[0], self.coor[1], 32, 32)
-        return None
+        
+    def _collide_info(self, xvel, yvel, blocks):
+        '''
+        borrowed from 
+        http://stackoverflow.com/questions/18966882/
+        add-collision-detection-to-a-plattformer-in-pygame
+        '''
+        # all blocks that we collide with
+        for block in [blocks[i] for i in self.rect.collidelistall(blocks)]:
+            # if xvel is > 0, we know our right side bumped 
+            # into the left side of a block etc.
+            if xvel > 0: self.rect.right = block.rect.left
+            if xvel < 0: self.rect.left = block.rect.right
+
+            # if yvel > 0, we are falling, so if a collision happpens 
+            # we know we hit the ground (remember, we seperated checking for
+            # horizontal and vertical collision, so if yvel != 0, xvel is 0)
+            if yvel > 0:
+                self.rect.bottom = block.rect.top
+                self.on_ground = True
+                self.yvel = 0
+            # if yvel < 0 and a collision occurs, we bumped our head
+            # on a block above us
+            if yvel < 0: self.rect.top = block.rect.bottom
+
     
     def _reset(self):
         #reset all animationss
@@ -160,5 +182,5 @@ class main_character(pygame.sprite.Sprite):
         self.idle_left.iter()
         self.walk_right.iter()
         self.walk_left.iter()
-        return None
+
     

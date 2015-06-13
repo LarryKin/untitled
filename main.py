@@ -57,7 +57,7 @@ while True:
         if event.type == pygame.QUIT: 
             sys.exit()
             
-    characters.update()   
+    characters.update(tiles.sprites())   
     characters.draw(screen)
     tiles.draw(screen)
             
