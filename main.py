@@ -31,7 +31,7 @@ clock = pygame.time.Clock()
 test = 0
 #ranger_image = ranger_idle 
 speed = (0,0)
-coor = (100,68)
+coor = (100,0)
 
 
 #the first eight determines which key is pressed, while the 9th item in the 

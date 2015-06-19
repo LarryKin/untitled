@@ -19,7 +19,7 @@ class main_character(pygame.sprite.Sprite):
         self.frames = frames
         
         self.speed = (0,0)
-        self.speed_mag = 2 #in pixels per frame
+        self.speed_mag = 1 #in pixels per frame
         self.speed_comp = 0.707 * self.speed_mag #normalize to 1/sqrt(2)
         self.speed_list = [(self.speed_mag, 0), (-self.speed_mag, 0), 
                            (0, -self.speed_mag), (0, self.speed_mag), 
@@ -32,29 +32,29 @@ class main_character(pygame.sprite.Sprite):
         
         self.walk_down = sprite_handle.sprite_strip_anim(
                                                'sprites/jael.png', 
-                                               (0, 0, 32, 48), 4,
-                                               None, True, self.frames)
+                                               (0, 0, 32, 48), 4, 
+                                               -1, True, self.frames)
         self.walk_left = sprite_handle.sprite_strip_anim(
                                                'sprites/goblins.png', 
-                                               (0,224, 32, 32), 10,
-                                               None, True, True, self.frames)        
+                                               (0,224, 32, 32), 10, 
+                                               -1, True, True, self.frames)        
         self.walk_right = sprite_handle.sprite_strip_anim(
                                                'sprites/goblins.png', 
-                                               (0,224, 32, 32), 10,
-                                               None, True, False, self.frames)
+                                               (0,224, 32, 32), 10, 
+                                               -1, True, False, self.frames)
         self.walk_up = sprite_handle.sprite_strip_anim(
                                                'sprites/jael.png', 
-                                               (0, 144, 32, 48), 4,
-                                               None, True, self.frames)
+                                               (0, 144, 32, 48), 4, 
+                                               -1, True, self.frames)
         self.idle_right = sprite_handle.sprite_strip_anim(
                                                'sprites/goblins.png', 
-                                               (0, 160, 32, 32), 10,
-                                               None, True, False, self.frames)
+                                               (0, 160, 32, 32), 10, 
+                                               -1, True, False, self.frames)
                                                
         self.idle_left = sprite_handle.sprite_strip_anim(
                                                'sprites/goblins.png', 
                                                (0, 160, 32, 32), 10,
-                                               None, True, True, self.frames)
+                                               -1, True, True, self.frames)
         
         self.on_ground = False
         self.state = self.idle_right
@@ -135,9 +135,8 @@ class main_character(pygame.sprite.Sprite):
                 self.speed = (0,0)
         
         #now include gravity
-        temp_speed = (self.speed[0] + gravity[0], 
+        self.speed = (self.speed[0] + gravity[0], 
                       self.speed[1] + gravity[1])
-        self.speed = temp_speed
         
         #update y first
         self.rect.centery += self.speed[1]
@@ -150,7 +149,6 @@ class main_character(pygame.sprite.Sprite):
         
         
         self.image = self.state.next()
-        
     def _collide_info(self, xvel, yvel, blocks):
         '''
         borrowed from 
