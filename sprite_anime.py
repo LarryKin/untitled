@@ -63,6 +63,8 @@ class main_character(pygame.sprite.Sprite):
         self.rect = self.image.get_bounding_rect()
         self.rect.centerx = initial_coor[0]
         self.rect.centery = initial_coor[1]
+        self.x = initial_coor[0]
+        self.y = initial_coor[1]
     
     def update(self, blocks):
         '''
@@ -139,12 +141,16 @@ class main_character(pygame.sprite.Sprite):
                       self.speed[1] + gravity[1])
         
         #update y first
-        self.rect.centery += self.speed[1]
+        self.y += self.speed[1]
+        self.rect.centery = round(self.y)
         self.on_ground = False
         self._collide_info(0, self.speed[1], blocks)
         
         #then update x
-        self.rect.centerx += self.speed[0]
+        self.x += self.spped[0]
+        self.rect.centerx = round(self.x)
+        
+        print self.rect.centery
         self._collide_info(self.speed[0], 0, blocks)
         
         
