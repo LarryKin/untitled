@@ -31,7 +31,7 @@ class main_character(pygame.sprite.Sprite):
         #initialize sprite sheet handler
         
         self.walk_down = sprite_handle.sprite_strip_anim(
-                                               'sprites/jael.png', 
+                                               'sprites/goblins.png', 
                                                (0, 0, 32, 48), 4, 
                                                -1, True, self.frames)
         self.walk_left = sprite_handle.sprite_strip_anim(
@@ -43,7 +43,7 @@ class main_character(pygame.sprite.Sprite):
                                                (0,224, 32, 32), 10, 
                                                -1, True, False, self.frames)
         self.walk_up = sprite_handle.sprite_strip_anim(
-                                               'sprites/jael.png', 
+                                               'sprites/goblins.png', 
                                                (0, 144, 32, 48), 4, 
                                                -1, True, self.frames)
         self.idle_right = sprite_handle.sprite_strip_anim(
@@ -147,10 +147,9 @@ class main_character(pygame.sprite.Sprite):
         self._collide_info(0, self.speed[1], blocks)
         
         #then update x
-        self.x += self.spped[0]
+        self.x += self.speed[0]
         self.rect.centerx = round(self.x)
         
-        print self.rect.centery
         self._collide_info(self.speed[0], 0, blocks)
         
         

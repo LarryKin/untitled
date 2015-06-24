@@ -9,62 +9,55 @@ import sys, pygame
 import pygame.locals
 import sprite_anime
 import floor
+import gameclock
+from settings import Settings
+import world
 
+#some setting
 
-
-pygame.init()
-
-size = width, height = 200, 200
-speed = [2, 2]
+size = width, height = Settings.screen_size
 black = (0, 0, 0)
 white = (255,255,255)
 
-FPS = 120
-frames = FPS / 24
-screen = pygame.display.set_mode(size)
 
+#constant FPS with lower rate of update per second
+FPS = Settings.fps
+ups = Settings.ups
 
-clock = pygame.time.Clock()
-   
-
-#main game loop
-test = 0
-#ranger_image = ranger_idle 
-speed = (0,0)
+#initial coor
 coor = (100,0)
 
 
-#the first eight determines which key is pressed, while the 9th item in the 
-#list is only False if rest of eight are all False
-directions_down = [False]*9    
-attack_key_down = False
+class Camera(object):
+    pass
 
-keys_list = [attack_key_down, directions_down]
 
-main_character = sprite_anime.main_character(coor, frames)
-floor1 = floor.floor()
+class Game(object):
+    def __init__(self):       
+        #initialize screen
+        pygame.init()
+        self.screen = pygame.display.set_mode(size)
+        self.screen.fill(black)
+        
+        #initialize the world
+        self.my_world = world.World(self.screen)
+        
+        #initialize gameclock
+        self.clock = gameclock.GameClock(max_ups = Settings.ups,
+                                         max_fps = Settings.fps,
+                                         update_callback = self.my_world.update,
+                                         frame_callback = self.my_world.draw)
+     
+    def run(self):
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT: 
+                    sys.exit()
+            self.clock.tick()
 
-characters = pygame.sprite.Group(main_character)
-tiles = pygame.sprite.Group(floor1)
-
-while True:
- 
-    screen.fill(black)
-    
-    #initialize default state of sprites   
-    
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT: 
-            sys.exit()
-            
-    characters.update(tiles.sprites())   
-    characters.draw(screen)
-    tiles.draw(screen)
-            
-    #pirate_one.draw(screen, player_coor)
-    pygame.display.flip()
-    clock.tick(FPS)
-    
+        
+if __name__ == '__main__':   
+    Game().run()
         
 pygame.quit()            
             
