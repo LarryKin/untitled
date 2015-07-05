@@ -13,7 +13,7 @@ class World(object):
     
     def __init__(self, screen):       
         #create some basic sprite in the world and group them
-        self.main_character = sprite_anime.main_character(coor, ups)
+        self.main_character = sprite_anime.main_character(coor, 2)
         self.floor1 = floor.floor()
         self.characters = pygame.sprite.Group(self.main_character)
         self.tiles = pygame.sprite.Group(self.floor1)
