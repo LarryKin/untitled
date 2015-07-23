@@ -39,14 +39,16 @@ class Game(object):
         self.screen = pygame.display.set_mode(size)
         self.screen.fill(black)
         
-        #initialize the world
+        #initialize the world and camera
         self.my_world = world.World(self.screen)
+        self.camera = world.Camera(self.screen)        
         
         #initialize gameclock
         self.clock = gameclock.GameClock(max_ups = Settings.ups,
                                          max_fps = Settings.fps,
                                          update_callback = self.my_world.update,
-                                         frame_callback = self.my_world.draw)
+                                         frame_callback = self.camera.shoot,
+                                         frame_callback_arg = self.my_world)
      
     def run(self):
         while True:

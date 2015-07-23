@@ -64,13 +64,13 @@ class main_character(pygame.sprite.Sprite):
 
         self.x = initial_coor[0]
         self.y = initial_coor[1]
-        self.rect.centery = round(self.y)
-        self.rect.centerx = round(self.x)
+        self.rect.topleft = (round(self.x), round(self.y))
     
     def update(self, blocks):
         '''
         use keys_list found by events_fetch to update the keys_list
         '''
+        
         #first record the state of last update to determine if reset animation
         last_frame_state = self.state      
         #record last update vertical speed to enable jump
@@ -145,13 +145,13 @@ class main_character(pygame.sprite.Sprite):
         
         #update y first
         self.y += self.speed[1]
-        self.rect.centery = round(self.y)
+        self.rect.topleft = (self.rect.topleft[0], round(self.y))
         self.on_ground = False
         self._collide_info(0, self.speed[1], blocks)
         
         #then update x
         self.x += self.speed[0]
-        self.rect.centerx = round(self.x)
+        self.rect.topleft = (round(self.x), self.rect.topleft[1])
         
         self._collide_info(self.speed[0], 0, blocks)
         
@@ -169,10 +169,10 @@ class main_character(pygame.sprite.Sprite):
             # into the left side of a block etc.
             if xvel > 0: 
                 self.rect.right = block.rect.left
-                self.x = self.rect.centerx
+                self.x = self.rect.topleft[0]
             if xvel < 0: 
                 self.rect.left = block.rect.right
-                self.x = self.rect.centerx
+                self.x = self.rect.topleft[0]
 
             # if yvel > 0, we are falling, so if a collision happpens 
             # we know we hit the ground (remember, we seperated checking for
@@ -180,13 +180,13 @@ class main_character(pygame.sprite.Sprite):
             if yvel > 0:
                 self.rect.bottom = block.rect.top
                 self.on_ground = True
-                self.y = self.rect.centery
+                self.y = self.rect.topleft[1]
                 self.yvel = 0
             # if yvel < 0 and a collision occurs, we bumped our head
             # on a block above us
             if yvel < 0: 
                 self.rect.top = block.rect.bottom
-                self.y = self.rect.centery
+                self.y = self.rect.topleft[1]
 
     
     def _reset(self):

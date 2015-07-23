@@ -145,6 +145,7 @@ class GameClock(object):
             time_source=time.time,
             update_callback=None,
             frame_callback=None,
+            frame_callback_arg = None,
             paused_callback=None):
         
         # Configurables.
@@ -154,6 +155,7 @@ class GameClock(object):
         self.use_wait = use_wait
         self.update_callback = update_callback
         self.frame_callback = frame_callback
+        self.frame_callback_arg = frame_callback_arg
         self.paused_callback = paused_callback
         
         # Time keeping.
@@ -275,7 +277,8 @@ class GameClock(object):
         if self.frame_callback and self._frame_ready:
             get_ticks = self.get_ticks
             t = get_ticks()
-            self.frame_callback(self.interpolate)
+            self.frame_callback(self.interpolate,
+                                self.frame_callback_arg)
             self.cost_of_frame = get_ticks() - t
             self._frame_ready = False
         
