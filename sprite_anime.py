@@ -3,12 +3,19 @@
 Created on Fri May 22 13:03:49 2015
 
 @author: larry
+
+TODO (May 7, 2017):
+    1.Separate character and animation handling
+    2.At this moment, the character can tunnel through thin wall. Need to 
+      reimplement collision (by create a rect object for the path of character
+      and check if this rect collide with anything along the way!)
 """
 import sprite_handle
 import pygame
 
 white = (255, 255, 255)
-gravity = (0,1)
+gravity = [0,1]
+
 
 class main_character(pygame.sprite.Sprite):  
     def __init__(self, initial_coor, frames):
@@ -18,14 +25,14 @@ class main_character(pygame.sprite.Sprite):
         self.directions_down = [False] * 5
         self.frames = frames  #number seconds between
         
-        self.speed = (0,0)   #current speed of sprite
+        self.speed = [0,0]   #current speed of sprite
         self.walk_speed = 5 #in pixels per seconds
-        self.jump_vel = 10
-        self.jump_vel_comp = 10
-        self.speed_list = [(self.walk_speed, 0), (-self.walk_speed, 0), 
-                           (0, -self.jump_vel), 
-                           (self.jump_vel_comp, -self.jump_vel_comp),
-                           (-self.jump_vel_comp, -self.jump_vel_comp)]
+        self.jump_vel = 30
+        self.jump_vel_comp = 30
+        self.speed_list = [[self.walk_speed, 0], [-self.walk_speed, 0], 
+                           [0, -self.jump_vel], 
+                           [self.jump_vel_comp, -self.jump_vel_comp],
+                           [-self.jump_vel_comp, -self.jump_vel_comp]]
 
         
         #initialize sprite sheet handler
@@ -129,7 +136,7 @@ class main_character(pygame.sprite.Sprite):
         #this allows the animation of default idle state to play
         if self.state == None:
             self.state = last_frame_state
-            self.speed = (0,0)
+            self.speed = [0,0]
                    
                 
         #update the speed and new coordinate
@@ -137,22 +144,24 @@ class main_character(pygame.sprite.Sprite):
             if self.directions_down[i] == True:
                 self.speed = self.speed_list[i]
         if not self.on_ground:
-            self.speed = (self.speed[0], last_y_vel)
+            self.speed = [self.speed[0], last_y_vel]
         
-        #now include gravity
-        self.speed = (self.speed[0] + gravity[0], 
-                      self.speed[1] + gravity[1])
+        #now include gravity (it doesn't have to be in y direction!)
+        self.speed = [self.speed[0] + gravity[0], 
+                      self.speed[1] + gravity[1]]  
         
         #update y first
         self.y += self.speed[1]
         self.rect.topleft = (self.rect.topleft[0], round(self.y))
         self.on_ground = False
+        #check collision y and update accordingly
         self._collide_info(0, self.speed[1], blocks)
         
         #then update x
         self.x += self.speed[0]
         self.rect.topleft = (round(self.x), self.rect.topleft[1])
         
+        #then check collision x
         self._collide_info(self.speed[0], 0, blocks)
         
         
@@ -163,7 +172,7 @@ class main_character(pygame.sprite.Sprite):
         http://stackoverflow.com/questions/18966882/
         add-collision-detection-to-a-plattformer-in-pygame
         '''
-        # all blocks that we collide with
+        # all blocks that we can collide with
         for block in [blocks[i] for i in self.rect.collidelistall(blocks)]:
             # if xvel is > 0, we know our right side bumped 
             # into the left side of a block etc.
@@ -181,16 +190,18 @@ class main_character(pygame.sprite.Sprite):
                 self.rect.bottom = block.rect.top
                 self.on_ground = True
                 self.y = self.rect.topleft[1]
-                self.yvel = 0
+                self.speed[1] = 0
             # if yvel < 0 and a collision occurs, we bumped our head
             # on a block above us
             if yvel < 0: 
                 self.rect.top = block.rect.bottom
                 self.y = self.rect.topleft[1]
+                self.speed[1] = 0
+                
 
     
     def _reset(self):
-        #reset all animationss
+        #reset all animations
         self.idle_right.iter()
         self.idle_left.iter()
         self.walk_right.iter()

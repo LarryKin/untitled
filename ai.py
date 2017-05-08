@@ -23,7 +23,7 @@ class normal_pirate(sprite_anime.main_anime):
         self.safe_distance = 50
         self.coor = initial_coor
         
-        #over ride the default speed in super class
+        #override the default speed in super class
         self.speed_mag = 1 #in pixels per frame
         self.speed_comp = 0.707 * self.speed_mag #normalize to 1/sqrt(2)
         self.speed_list = [(self.speed_mag, 0), (-self.speed_mag, 0), 

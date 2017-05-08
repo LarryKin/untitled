@@ -51,6 +51,7 @@ class Game(object):
                                          frame_callback_arg = self.my_world)
      
     def run(self):
+        #main game loop
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: 

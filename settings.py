@@ -1,6 +1,6 @@
 
 class Settings(object):
-    fps = 60
+    fps = 120
     ups = 30
-    screen_size = width, height = 200, 200
+    screen_size = width, height = 640, 480
     

@@ -7,7 +7,7 @@ ups = Settings.ups
 black = (0, 0, 0)
 
 #just some place holder
-coor = (100,0)
+coor = (150,50)
 
 screen_centerx = 100
 screen_centery = 100
@@ -17,9 +17,11 @@ class World(object):
     def __init__(self, screen):       
         #create some basic sprite in the world and group them
         self.main_character = sprite_anime.main_character(coor, 2)
-        self.floor1 = floor.floor()
+        self.floor1 = floor.Wall((200,3), (100,100))
         self.characters = pygame.sprite.Group(self.main_character)
         self.tiles = pygame.sprite.Group(self.floor1)
+        #add boundries walls to self.tiles member list
+        floor.playground(self.tiles)
         self.screen = screen
 
     def update(self, dt):
